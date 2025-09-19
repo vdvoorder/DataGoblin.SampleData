@@ -1,4 +1,4 @@
-function 'SampleData.Orders' = ```
+function 'DataGoblins.SampleData.Orders' = ```
 		
 		-- Generate Goblin Marketplace orders fact table
 		-- Tracks order lines with SAP-style numbering and realistic line-level variations
@@ -294,7 +294,11 @@ function 'SampleData.Orders' = ```
 		```
 	lineageTag: 51887f21-f1b2-4c33-a446-dfbe503480db
 
-function 'SampleData.Inventory' = ```
+	annotation DAXLIB_PackageId = DataGoblins.SampleData
+
+	annotation DAXLIB_PackageVersion = 0.1.0-beta
+
+function 'DataGoblins.SampleData.Inventory' = ```
 		
 		-- Generate Goblin Warehouse inventory snapshot fact table
 		-- Weekly snapshots for past weeks, daily for current week
@@ -368,12 +372,12 @@ function 'SampleData.Inventory' = ```
 		                VAR _Warehouse = [WarehouseKey]
 		                VAR _Week = [WeekNum]
 		                VAR _Day = [DayInWeek]
-
+		
 		                -- Generate product/warehouse-specific seeds
 		                VAR _ProductSeed = MOD( _Product * 7919 + seed, 32749 )
 		                VAR _WarehouseSeed = MOD( _Warehouse * 6271 + seed, 32749 )
 		                VAR _CombinedSeed = MOD( _ProductSeed + _WarehouseSeed, 32749 )
-
+		
 		                -- Product-specific characteristics (much more variation)
 		                VAR _ProductType = MOD( _ProductSeed, 5 )  -- 0=Fast, 1=Medium, 2=Slow, 3=Seasonal, 4=Luxury
 		                VAR _DemandMultiplier =
@@ -385,26 +389,26 @@ function 'SampleData.Inventory' = ```
 		                        4, 0.1 + MOD( _ProductSeed, 8 ) / 20,      -- Luxury: 0.1-0.5x
 		                        1.0
 		                    )
-
+		
 		                -- Warehouse-specific efficiency
 		                VAR _WarehouseEfficiency = 0.7 + MOD( _WarehouseSeed, 30 ) / 100  -- 0.7-1.0
-
+		
 		                -- Product-specific stock levels
 		                VAR _InitialStock = ROUND( _BaseInitialStock * (0.3 + MOD( _ProductSeed, 70 ) / 100), 0 )  -- 30%-100% of base
 		                VAR _ReorderQuantity = ROUND( _BaseReorderQuantity * (0.4 + MOD( _ProductSeed + 100, 60 ) / 100), 0 )  -- 40%-100% of base
-
+		
 		                VAR _DailyDemand = _BaseDailyDemand * _DemandMultiplier * _WarehouseEfficiency
 		                VAR _WeeklyDemand = ROUND( _DailyDemand * 7, 0 )
-
+		
 		                -- Calculate stock level with weekly cycle and more variation
 		                VAR _BaseStock = _InitialStock + ( _ReorderQuantity * _Week )
 		                VAR _Depletion = _WeeklyDemand * _Week
-
+		
 		                -- Add realistic variance with product-specific patterns
 		                VAR _SeasonalVariance = SIN( (_Week + _ProductSeed / 100) * PI() / 13 ) * (50 + MOD( _ProductSeed, 100 ))
 		                VAR _DayVariance = COS( _Day * PI() / 7 ) * (10 + MOD( _WarehouseSeed, 30 ))
 		                VAR _RandomVariance = (MOD( _CombinedSeed + _Week, 100 ) - 50) * 2  -- ±100 random variance
-
+		
 		                RETURN MAX( 0, ROUND( _BaseStock - _Depletion + _SeasonalVariance + _DayVariance + _RandomVariance, 0 ) ),
 		            
 		            "ReservedQuantity",
@@ -412,7 +416,7 @@ function 'SampleData.Inventory' = ```
 		                VAR _Warehouse = [WarehouseKey]
 		                VAR _Week = [WeekNum]
 		                VAR _Day = [DayInWeek]
-
+		
 		                -- Recalculate OnHandQuantity (same logic as above)
 		                VAR _ProductSeed = MOD( _Product * 7919 + seed, 32749 )
 		                VAR _WarehouseSeed = MOD( _Warehouse * 6271 + seed, 32749 )
@@ -438,7 +442,7 @@ function 'SampleData.Inventory' = ```
 		                VAR _DayVariance = COS( _Day * PI() / 7 ) * (10 + MOD( _WarehouseSeed, 30 ))
 		                VAR _RandomVariance = (MOD( _CombinedSeed + _Week, 100 ) - 50) * 2
 		                VAR _OnHandQty = MAX( 0, ROUND( _BaseStock - _Depletion + _SeasonalVariance + _DayVariance + _RandomVariance, 0 ) )
-
+		
 		                -- Base reservation percentage varies by product type and day
 		                VAR _BaseReservationPct =
 		                    SWITCH( _ProductType,
@@ -449,23 +453,23 @@ function 'SampleData.Inventory' = ```
 		                        4, 0.05,  -- Luxury: very low reservations
 		                        0.15
 		                    )
-
+		
 		                -- Day-of-week variation (higher on weekdays)
 		                VAR _DayMultiplier = IF( _Day <= 5, 1.0 + (_Day / 10), 0.3 )
-
+		
 		                -- Warehouse efficiency affects reservations
 		                VAR _WhsMultiplier = 0.8 + MOD( _WarehouseSeed, 40 ) / 100  -- 0.8-1.2
-
+		
 		                VAR _ReservationPct = _BaseReservationPct * _DayMultiplier * _WhsMultiplier
 		                RETURN MAX( 0, ROUND( _OnHandQty * _ReservationPct, 0 ) ),
-
+		
 		            "InTransitQuantity",
 		                VAR _ProductSeed = MOD( [ProductKey] * 7919 + seed, 32749 )
 		                VAR _BaseReorderQty = ROUND( _BaseReorderQuantity * (0.4 + MOD( _ProductSeed + 100, 60 ) / 100), 0 )
 		                VAR _HasInTransit = IF( [DayInWeek] >= 5, 1, 0 )  -- Only Friday-Sunday
 		                VAR _InTransitVariation = 0.7 + MOD( _ProductSeed + [WarehouseKey], 60 ) / 100  -- 0.7-1.3
 		                RETURN ROUND( _BaseReorderQty * _InTransitVariation * _HasInTransit, 0 ),
-
+		
 		            "UnitCost",
 		                VAR _ProductSeed = MOD( [ProductKey] * 7919 + seed, 32749 )
 		                VAR _ProductType = MOD( _ProductSeed, 5 )
@@ -520,7 +524,11 @@ function 'SampleData.Inventory' = ```
 		```
 	lineageTag: e97af9a3-0d2b-43b0-9f6a-47ded2ad9305
 
-function 'SampleData.Customer' = ```
+	annotation DAXLIB_PackageId = DataGoblins.SampleData
+
+	annotation DAXLIB_PackageVersion = 0.1.0-beta
+
+function 'DataGoblins.SampleData.Customer' = ```
 		
 		-- Generate Customer dimension table
 		-- Creates customer records based on CustomerKey values + extras
@@ -551,7 +559,7 @@ function 'SampleData.Customer' = ```
 		            ),
 		            "CustKey", [Value]
 		        )
-
+		
 		    VAR _DistinctKeys =
 		        SELECTCOLUMNS(
 		            FILTER(
@@ -560,7 +568,7 @@ function 'SampleData.Customer' = ```
 		            ),
 		            "CustKey", customer_keys
 		        )
-
+		
 		    VAR _ExtraKeysTable =
 		        SELECTCOLUMNS(
 		            FILTER(
@@ -569,7 +577,7 @@ function 'SampleData.Customer' = ```
 		            ),
 		            "CustKey", [Value]
 		        )
-
+		
 		    VAR _AllKeys = UNION( _FullRangeKeys, _DistinctKeys, _ExtraKeysTable )
 		    
 		    -- Generate customer attributes
@@ -778,7 +786,11 @@ function 'SampleData.Customer' = ```
 		```
 	lineageTag: 0fe67920-ae9e-4798-81b8-c154aeef0416
 
-function 'SampleData.Product' = ```
+	annotation DAXLIB_PackageId = DataGoblins.SampleData
+
+	annotation DAXLIB_PackageVersion = 0.1.0-beta
+
+function 'DataGoblins.SampleData.Product' = ```
 		
 		-- Generate Product dimension table
 		-- Creates product records based on ProductKey values + extras
@@ -809,7 +821,7 @@ function 'SampleData.Product' = ```
 		            ),
 		            "ProdKey", [Value]
 		        )
-
+		
 		    VAR _DistinctKeys =
 		        SELECTCOLUMNS(
 		            FILTER(
@@ -818,7 +830,7 @@ function 'SampleData.Product' = ```
 		            ),
 		            "ProdKey", product_keys
 		        )
-
+		
 		    VAR _ExtraKeysTable =
 		        SELECTCOLUMNS(
 		            FILTER(
@@ -827,7 +839,7 @@ function 'SampleData.Product' = ```
 		            ),
 		            "ProdKey", [Value]
 		        )
-
+		
 		    VAR _AllKeys = UNION( _FullRangeKeys, _DistinctKeys, _ExtraKeysTable )
 		    
 		    -- Generate product attributes
@@ -995,7 +1007,11 @@ function 'SampleData.Product' = ```
 		```
 	lineageTag: 09c604d8-fede-4211-9b01-41af755c1f24
 
-function 'SampleData.Store' = ```
+	annotation DAXLIB_PackageId = DataGoblins.SampleData
+
+	annotation DAXLIB_PackageVersion = 0.1.0-beta
+
+function 'DataGoblins.SampleData.Store' = ```
 		
 		-- Generate Store dimension table
 		-- Creates store records based on StoreKey values + extras
@@ -1026,7 +1042,7 @@ function 'SampleData.Store' = ```
 		            ),
 		            "StrKey", [Value]
 		        )
-
+		
 		    VAR _DistinctKeys =
 		        SELECTCOLUMNS(
 		            FILTER(
@@ -1035,7 +1051,7 @@ function 'SampleData.Store' = ```
 		            ),
 		            "StrKey", store_keys
 		        )
-
+		
 		    VAR _ExtraKeysTable =
 		        SELECTCOLUMNS(
 		            FILTER(
@@ -1044,7 +1060,7 @@ function 'SampleData.Store' = ```
 		            ),
 		            "StrKey", [Value]
 		        )
-
+		
 		    VAR _AllKeys = UNION( _FullRangeKeys, _DistinctKeys, _ExtraKeysTable )
 		    
 		    -- Generate store attributes
@@ -1268,7 +1284,11 @@ function 'SampleData.Store' = ```
 		```
 	lineageTag: 23d8a907-63b3-4bf1-9f52-5709047fd735
 
-function 'SampleData.Dates' = ```
+	annotation DAXLIB_PackageId = DataGoblins.SampleData
+
+	annotation DAXLIB_PackageVersion = 0.1.0-beta
+
+function 'DataGoblins.SampleData.Dates' = ```
 		
 		-- Generate Date dimension table
 		-- Creates a complete date table from full years based on input date columns
@@ -1434,4 +1454,8 @@ function 'SampleData.Dates' = ```
 		        _Dates
 		```
 	lineageTag: 2cbbaa79-3a88-4d6f-8964-1f705f919208
+
+	annotation DAXLIB_PackageId = DataGoblins.SampleData
+
+	annotation DAXLIB_PackageVersion = 0.1.0-beta
 
