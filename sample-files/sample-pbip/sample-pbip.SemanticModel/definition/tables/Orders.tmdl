@@ -148,7 +148,7 @@ table Orders
 		mode: import
 		source =
 				
-				SAMPLEDATA.ORDERS (
+				DATAGOBLINS.SAMPLEDATA.ORDERS (
 				    100,
 				    DATE ( 2025, 09, 01 ),
 				    DATE ( 2025, 09, 18 ),

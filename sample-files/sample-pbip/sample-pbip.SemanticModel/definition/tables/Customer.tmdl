@@ -115,7 +115,7 @@ table Customer
 		mode: import
 		source =
 				
-				SAMPLEDATA.CUSTOMER(
+				DATAGOBLINS.SAMPLEDATA.CUSTOMER(
 				    'Orders'[CustomerKey],
 				    0,
 				    FALSE,

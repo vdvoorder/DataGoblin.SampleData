@@ -125,7 +125,7 @@ table Product
 		mode: import
 		source =
 				
-				SAMPLEDATA.PRODUCT (
+				DATAGOBLINS.SAMPLEDATA.PRODUCT (
 				    'Orders'[ProductKey],
 				    0,
 				    FALSE,

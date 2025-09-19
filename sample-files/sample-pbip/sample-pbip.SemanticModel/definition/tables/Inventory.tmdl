@@ -80,7 +80,7 @@ table Inventory
 		mode: import
 		source =
 				
-				SAMPLEDATA.INVENTORY(
+				DATAGOBLINS.SAMPLEDATA.INVENTORY(
 				    18,
 				    DATE ( 2025, 09, 01 ),
 				    250,

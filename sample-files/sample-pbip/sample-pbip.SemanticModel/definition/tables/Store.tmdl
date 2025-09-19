@@ -164,7 +164,7 @@ table Store
 		mode: import
 		source =
 				
-				SAMPLEDATA.STORE (
+				DATAGOBLINS.SAMPLEDATA.STORE (
 				    'Orders'[StoreKey],
 				    0,
 				    FALSE,

@@ -9,7 +9,7 @@ model Model
 extendedProperty TabularEditor_DeploymentMetadata =
 		{
 		  "User": "MACDOWS\\klonk",
-		  "Time": "2025-09-19T16:50:52.888521+02:00",
+		  "Time": "2025-09-19T14:50:52.888521+00:00",
 		  "ClientMachine": "MACDOWS",
 		  "DeploymentMode": "SaveUI",
 		  "TabularEditorBuild": "3.23.1.8394"
