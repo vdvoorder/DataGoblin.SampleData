@@ -1,0 +1,6 @@
+{
+  "UseWorkspace": true,
+  "WorkspaceConnection": "provider=MSOLAP;data source=powerbi://api.powerbi.com/v1.0/myorg/DaxLib;identity mode=Connection",
+  "WorkspaceConnectionAuthMode": "MicrosoftEntraMFA",
+  "WorkspaceDatabase": "SampleData"
+}

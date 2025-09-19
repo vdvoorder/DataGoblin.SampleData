@@ -1,0 +1,32 @@
+model Model
+	culture: en-US
+	defaultPowerBIDataSourceVersion: powerBI_V3
+	sourceQueryCulture: en-US
+	dataAccessOptions
+		legacyRedirects
+		returnErrorValuesAsNull
+
+extendedProperty TabularEditor_DeploymentMetadata =
+		{
+		  "User": "MACDOWS\\klonk",
+		  "Time": "2025-09-19T16:50:52.888521+02:00",
+		  "ClientMachine": "MACDOWS",
+		  "DeploymentMode": "SaveUI",
+		  "TabularEditorBuild": "3.23.1.8394"
+		}
+
+annotation __PBI_TimeIntelligenceEnabled = 0
+
+annotation __TEdtr = 1
+
+annotation PBI_ProTooling = ["DevMode"]
+
+ref table Orders
+ref table Customer
+ref table Product
+ref table Store
+ref table Date
+ref table Inventory
+
+ref cultureInfo en-US
+
