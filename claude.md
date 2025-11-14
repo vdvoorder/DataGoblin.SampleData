@@ -335,8 +335,14 @@ A successful function expansion achieves:
 
 ## Version History
 
-- **v0.1.0-beta (Current)**: Initial release with 6 core functions (Orders, Inventory, Customer, Product, Store, Dates)
-- **Next**: Expansion based on sample file evaluation and mission alignment
+- **v0.1.0-beta**: Initial release with 6 core functions (Orders, Inventory, Customer, Product, Store, Dates)
+- **v0.2.0-beta (Current)**: Added RLS_UserMapping function for Row-Level Security testing
+  - Generates user-to-value permission mappings with realistic distribution patterns
+  - Uses normal distribution (via CLT) for permission counts per user
+  - Supports fine-grained, hierarchical security testing through composition
+  - Fantasy/sci-fi themed usernames matching existing library aesthetics
+  - Enables safe, reproducible RLS demos without Azure AD dependencies
+- **Next**: Future expansions based on sample file evaluation and mission alignment
 
 ---
 

@@ -295,7 +295,7 @@ function 'DataGoblins.SampleData.Orders' = ```
 
     annotation DAXLIB_PackageId = DataGoblins.SampleData
 
-    annotation DAXLIB_PackageVersion = 0.1.0-beta
+    annotation DAXLIB_PackageVersion = 0.2.0-beta
 
 function 'DataGoblins.SampleData.Inventory' = ```
         
@@ -524,7 +524,7 @@ function 'DataGoblins.SampleData.Inventory' = ```
 
     annotation DAXLIB_PackageId = DataGoblins.SampleData
 
-    annotation DAXLIB_PackageVersion = 0.1.0-beta
+    annotation DAXLIB_PackageVersion = 0.2.0-beta
 
 function 'DataGoblins.SampleData.Customer' = ```
         
@@ -785,7 +785,7 @@ function 'DataGoblins.SampleData.Customer' = ```
 
     annotation DAXLIB_PackageId = DataGoblins.SampleData
 
-    annotation DAXLIB_PackageVersion = 0.1.0-beta
+    annotation DAXLIB_PackageVersion = 0.2.0-beta
 
 function 'DataGoblins.SampleData.Product' = ```
         
@@ -1005,7 +1005,7 @@ function 'DataGoblins.SampleData.Product' = ```
 
     annotation DAXLIB_PackageId = DataGoblins.SampleData
 
-    annotation DAXLIB_PackageVersion = 0.1.0-beta
+    annotation DAXLIB_PackageVersion = 0.2.0-beta
 
 function 'DataGoblins.SampleData.Store' = ```
         
@@ -1281,7 +1281,7 @@ function 'DataGoblins.SampleData.Store' = ```
 
     annotation DAXLIB_PackageId = DataGoblins.SampleData
 
-    annotation DAXLIB_PackageVersion = 0.1.0-beta
+    annotation DAXLIB_PackageVersion = 0.2.0-beta
 
 function 'DataGoblins.SampleData.Dates' = ```
         
@@ -1444,11 +1444,180 @@ function 'DataGoblins.SampleData.Dates' = ```
                             "IsFuture", _IsFuture
                         )
                 )
-                
+
             RETURN
                 _Dates
         ```
 
     annotation DAXLIB_PackageId = DataGoblins.SampleData
 
-    annotation DAXLIB_PackageVersion = 0.1.0-beta
+    annotation DAXLIB_PackageVersion = 0.2.0-beta
+
+function 'DataGoblins.SampleData.RLS_UserMapping' = ```
+
+        -- Generate RLS User Permission mapping table
+        -- Creates user-to-value mappings for testing Row-Level Security with realistic permission distributions
+        (
+            -- Column containing dimension values to map (e.g., Store[Country])
+            dimension_column : ANYREF,
+
+            -- Role name for this permission level (e.g., "Country", "State")
+            role_name : TEXT,
+
+            -- Number of test users to generate
+            num_users : INT64,
+
+            -- Average permissions per user (can be decimal like 2.5)
+            avg_permissions_per_user : DECIMAL,
+
+            -- Standard deviation of permissions per user (controls variance)
+            stddev_permissions_per_user : DECIMAL,
+
+            -- Random seed for reproducibility
+            seed : INT64
+        )
+        =>
+            -- Get distinct dimension values
+            VAR _DimensionValues = DISTINCT( dimension_column )
+            VAR _NumValues = COUNTROWS( _DimensionValues )
+
+            -- Add index to dimension values for random selection
+            VAR _IndexedValues =
+                ADDCOLUMNS(
+                    _DimensionValues,
+                    "ValueIndex",
+                        VAR _CurrentValue = dimension_column
+                        RETURN COUNTROWS( FILTER( _DimensionValues, dimension_column <= _CurrentValue ) )
+                )
+
+            -- Generate user list with fantasy/sci-fi themed names
+            VAR _UserKeys = GENERATESERIES( 1, num_users, 1 )
+
+            VAR _Users =
+                ADDCOLUMNS(
+                    _UserKeys,
+                    "UserID", [Value],
+                    "R1", MOD( [Value] * 7919 + seed, 32749 ),
+                    "R2", MOD( [Value] * 6271 + seed, 32749 ),
+                    "R3", MOD( [Value] * 5413 + seed, 32749 )
+                )
+
+            VAR _UsersWithNames =
+                ADDCOLUMNS(
+                    _Users,
+                    "UserPrefix",
+                        SWITCH(
+                            MOD( [R1], 20 ),
+                            0, "shadow", 1, "nexus", 2, "quantum", 3, "primal", 4, "eldritch",
+                            5, "mystic", 6, "fusion", 7, "omega", 8, "crystal", 9, "stellar",
+                            10, "void", 11, "cipher", 12, "zenith", 13, "apex", 14, "forge",
+                            15, "flux", 16, "echo", 17, "vortex", 18, "pulse", 19, "drift",
+                            "data"
+                        ),
+                    "UserSuffix",
+                        SWITCH(
+                            MOD( [R2], 16 ),
+                            0, "prime", 1, "core", 2, "sync", 3, "tech", 4, "byte",
+                            5, "link", 6, "wave", 7, "node", 8, "flux", 9, "mesh",
+                            10, "grid", 11, "port", 12, "edge", 13, "beam", 14, "rise",
+                            15, "fall",
+                            "bit"
+                        ),
+                    "Domain",
+                        SWITCH(
+                            MOD( [R3], 5 ),
+                            0, "@data-goblins.com",
+                            1, "@nexus-labs.io",
+                            2, "@primal-tech.net",
+                            3, "@quantum-sys.com",
+                            4, "@mystic-corp.com",
+                            "@test.com"
+                        )
+                )
+
+            VAR _UsersWithPermissionCount =
+                ADDCOLUMNS(
+                    _UsersWithNames,
+                    "UserPrincipalName", [UserPrefix] & "." & [UserSuffix] & [Domain],
+
+                    -- Generate normal distribution using CLT (sum of 12 uniform random variables)
+                    "NormalRandom",
+                        VAR _U1 = MOD( [UserID] * 2311 + seed, 10000 ) / 10000
+                        VAR _U2 = MOD( [UserID] * 1993 + seed, 10000 ) / 10000
+                        VAR _U3 = MOD( [UserID] * 1777 + seed, 10000 ) / 10000
+                        VAR _U4 = MOD( [UserID] * 1553 + seed, 10000 ) / 10000
+                        VAR _U5 = MOD( [UserID] * 1399 + seed, 10000 ) / 10000
+                        VAR _U6 = MOD( [UserID] * 1237 + seed, 10000 ) / 10000
+                        VAR _U7 = MOD( [UserID] * 1087 + seed, 10000 ) / 10000
+                        VAR _U8 = MOD( [UserID] * 997 + seed, 10000 ) / 10000
+                        VAR _U9 = MOD( [UserID] * 887 + seed, 10000 ) / 10000
+                        VAR _U10 = MOD( [UserID] * 797 + seed, 10000 ) / 10000
+                        VAR _U11 = MOD( [UserID] * 701 + seed, 10000 ) / 10000
+                        VAR _U12 = MOD( [UserID] * 619 + seed, 10000 ) / 10000
+                        RETURN (_U1 + _U2 + _U3 + _U4 + _U5 + _U6 + _U7 + _U8 + _U9 + _U10 + _U11 + _U12 - 6)
+                    -- Normal(0,1) approximation: sum of 12 U(0,1) - 6
+                )
+
+            VAR _UsersWithPermissions =
+                ADDCOLUMNS(
+                    _UsersWithPermissionCount,
+                    "NumPermissions",
+                        VAR _RawValue = avg_permissions_per_user + (stddev_permissions_per_user * [NormalRandom])
+                        VAR _Rounded = ROUND( _RawValue, 0 )
+                        RETURN MAX( 0, MIN( _Rounded, _NumValues ) )  -- Floor at 0, cap at total values available
+                )
+
+            -- Generate permission assignments
+            VAR _PermissionSlots =
+                GENERATE(
+                    _UsersWithPermissions,
+                    VAR _UserID = [UserID]
+                    VAR _UserName = [UserPrincipalName]
+                    VAR _NumPerms = [NumPermissions]
+                    VAR _PermSeries = GENERATESERIES( 1, _NumPerms, 1 )
+                    RETURN
+                        ADDCOLUMNS(
+                            _PermSeries,
+                            "UserID", _UserID,
+                            "UserPrincipalName", _UserName,
+                            "PermissionSlot", [Value]
+                        )
+                )
+
+            -- Assign random values to each permission slot
+            VAR _PermissionAssignments =
+                ADDCOLUMNS(
+                    _PermissionSlots,
+                    "R_Value", MOD( [UserID] * 3571 + [PermissionSlot] * 2999 + seed, 32749 ),
+                    "SelectedValueIndex",
+                        MOD( [UserID] * 3571 + [PermissionSlot] * 2999 + seed, _NumValues ) + 1
+                )
+
+            -- Join with dimension values to get actual values
+            VAR _FinalPermissions =
+                GENERATE(
+                    _PermissionAssignments,
+                    VAR _TargetIndex = [SelectedValueIndex]
+                    VAR _SelectedValue =
+                        MAXX(
+                            FILTER( _IndexedValues, [ValueIndex] = _TargetIndex ),
+                            dimension_column
+                        )
+                    RETURN
+                        ROW(
+                            "UserPrincipalName", [UserPrincipalName],
+                            "Role", role_name,
+                            "Value", _SelectedValue
+                        )
+                )
+
+            -- Remove duplicates (same user assigned same value multiple times)
+            VAR _DistinctPermissions = DISTINCT( _FinalPermissions )
+
+            RETURN
+                _DistinctPermissions
+        ```
+
+    annotation DAXLIB_PackageId = DataGoblins.SampleData
+
+    annotation DAXLIB_PackageVersion = 0.2.0-beta

@@ -32,6 +32,10 @@ The functions generate the following data.
 - **[SampleData.Store](docs/store.md)** - Generates store dimension data with region/district structure
 - **[SampleData.Dates](docs/dates.md)** - Generates comprehensive date dimension table
 
+### Security & Helper tables
+
+- **[SampleData.RLS_UserMapping](docs/rls_user_mapping.md)** - Generates user permission mappings for Row-Level Security testing with realistic distribution patterns
+
 ## Example Model
 
 For a complete working example, see the Power BI project file:
