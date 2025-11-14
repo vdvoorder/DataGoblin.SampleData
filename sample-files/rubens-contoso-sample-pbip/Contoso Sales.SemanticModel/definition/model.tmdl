@@ -1,0 +1,32 @@
+model Model
+	culture: en-US
+	defaultPowerBIDataSourceVersion: powerBI_V3
+	discourageImplicitMeasures
+	sourceQueryCulture: en-US
+	dataAccessOptions
+		legacyRedirects
+		returnErrorValuesAsNull
+
+annotation __PBI_TimeIntelligenceEnabled = 0
+
+annotation PBI_QueryOrder = ["Files Path","_Measures","Customer","Date","Product","Sales","Store","RLS_User Permissions"]
+
+annotation __TEdtr = 1
+
+annotation PBI_ProTooling = ["DaxQueryView_Desktop","DevMode"]
+
+ref table Customer
+ref table Date
+ref table Product
+ref table Sales
+ref table Store
+ref table '_Calculations_Time Intelligence'
+ref table _Measures
+ref table 'RLS_User Permissions'
+
+ref role 'Store Country'
+ref role 'Store State'
+ref role 'No security'
+
+ref cultureInfo en-US
+

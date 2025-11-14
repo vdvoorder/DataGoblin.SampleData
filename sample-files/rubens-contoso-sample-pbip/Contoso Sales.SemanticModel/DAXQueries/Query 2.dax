@@ -1,0 +1,26 @@
+DEFINE
+	VAR __DS0Core = 
+		SELECTCOLUMNS(
+			KEEPFILTERS(
+				FILTER(
+					KEEPFILTERS(
+						SUMMARIZECOLUMNS('Date'[Year], 'Product'[Color], "CountRowsSales", COUNTROWS('Sales'))
+					),
+					OR(
+						NOT(ISBLANK('Date'[Year])),
+						NOT(ISBLANK('Product'[Color]))
+					)
+				)
+			),
+			"'Date'[Year]", 'Date'[Year],
+			"'Product'[Color]", 'Product'[Color]
+		)
+
+	VAR __DS0PrimaryWindowed = 
+		TOPN(501, __DS0Core, 'Product'[Color], 1, 'Date'[Year], 1)
+
+EVALUATE
+	__DS0PrimaryWindowed
+
+ORDER BY
+	'Product'[Color], 'Date'[Year]

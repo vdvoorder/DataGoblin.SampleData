@@ -1,0 +1,8 @@
+/// Parameter to refer to the path where the files are stored.
+expression 'Files Path' = "https://rvdvdev.sharepoint.com/sites/contoso/" meta [IsParameterQuery=true, Type="Text", IsParameterQueryRequired=true]
+	lineageTag: 88fed0cb-9ccd-4b30-86a6-76c5b42ab5ec
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Text
+

@@ -1,0 +1,243 @@
+table Customer
+	lineageTag: 7b434333-f698-4a4b-b0f5-afdd914a6865
+
+	column CustomerKey
+		dataType: int64
+		isHidden
+		isKey
+		formatString: 0
+		lineageTag: cfa006ae-f97b-4261-b699-3101b659bdd7
+		summarizeBy: none
+		sourceColumn: CustomerKey
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column Gender
+		dataType: string
+		lineageTag: 7259f0fe-9bef-4c70-bf5c-d53f7681b7da
+		summarizeBy: none
+		sourceColumn: Gender
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column Name
+		dataType: string
+		lineageTag: 9fa8a6d6-d4f7-4711-b9a0-b8f19f9da613
+		isDefaultLabel
+		summarizeBy: none
+		sourceColumn: Name
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column Address
+		dataType: string
+		lineageTag: a414833f-1ad9-41b1-b233-c8c0c56058f7
+		dataCategory: Address
+		summarizeBy: none
+		sourceColumn: Address
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column City
+		dataType: string
+		lineageTag: 9b1b71d3-a566-4afe-b235-35c45fef26d2
+		dataCategory: City
+		summarizeBy: none
+		sourceColumn: City
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'State Code'
+		dataType: string
+		lineageTag: ff91a573-eacc-4d5d-b678-61bee1de07d0
+		summarizeBy: none
+		sourceColumn: State Code
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column State
+		dataType: string
+		lineageTag: 42189f04-b230-4239-812f-844c00731b7b
+		dataCategory: StateOrProvince
+		summarizeBy: none
+		sourceColumn: State
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Zip Code'
+		dataType: string
+		lineageTag: eb74c28b-a253-4076-b393-2b30cd2ec647
+		dataCategory: PostalCode
+		summarizeBy: none
+		sourceColumn: Zip Code
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Country Code'
+		dataType: string
+		lineageTag: b2fc3024-2f46-4d50-a4c8-b04713427914
+		summarizeBy: none
+		sourceColumn: Country Code
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column Country
+		dataType: string
+		lineageTag: 06eba712-eace-44c6-b3d7-b3739f4e2ab9
+		dataCategory: Country
+		summarizeBy: none
+		sourceColumn: Country
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column Continent
+		dataType: string
+		lineageTag: df8d874c-d840-4fc6-930d-0a0fec9a5dd7
+		dataCategory: Continent
+		summarizeBy: none
+		sourceColumn: Continent
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column Birthday
+		dataType: dateTime
+		lineageTag: 3176a742-cb89-4782-ab14-45bea998ee26
+		summarizeBy: none
+		sourceColumn: Birthday
+
+		changedProperty = FormatString
+
+		changedProperty = IsHidden
+
+		changedProperty = DataType
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+		annotation PBI_FormatHint = {"isDateTimeCustom":true}
+
+	column Age
+		dataType: int64
+		formatString: 0
+		lineageTag: 5620c72b-b9c9-4816-9c2a-6ccec01044f5
+		summarizeBy: none
+		sourceColumn: Age
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation __PBI_SemanticLinks = [{"LinkTarget":{"TableName":"Customer","TableItemName":"Age (bins)","ObjectType":4},"LinkType":"UsedInGroup"}]
+
+	column 'Age (bins)' =
+			VAR __Count = 10
+			
+			VAR __Min = MIN('Customer'[Age])
+			
+			VAR __Max = MAX('Customer'[Age])
+			
+			VAR __Difference = (__Max - __Min)
+			
+			VAR __Size = IF(__Difference > 0, __Difference / __Count, 1)
+			
+			VAR __BinNumber = INT(('Customer'[Age] - __Min) / __Size)
+			
+			RETURN
+				IF(
+					ISBLANK('Customer'[Age]),
+					BLANK(),
+					__Min + (MIN(__BinNumber, __Count - 1) * __Size)
+				)
+		lineageTag: 1b80acb3-109f-4b7b-b11e-c34a314df475
+		summarizeBy: none
+
+		extendedProperty GroupingMetadata =
+				{
+				  "version": 0,
+				  "groupedColumns": [
+				    {
+				      "Column": {
+				        "Expression": {
+				          "SourceRef": {
+				            "Entity": "Customer"
+				          }
+				        },
+				        "Property": "Age"
+				      }
+				    }
+				  ]
+				}
+
+		annotation GroupingDesignState = {"Version":0,"Sources":[{"Name":"c","Entity":"Customer"}],"GroupedColumns":[{"Column":{"Expression":{"SourceRef":{"Source":"c"}},"Property":"Age"}}],"BinItem":{"Expression":{"Member":{"Expression":{"Discretize":{"Expression":{"Column":{"Expression":{"SourceRef":{"Source":"c"}},"Property":"Age"}},"Count":10}},"Member":"Min"}}}}
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	hierarchy 'Geography Hierarchy'
+		lineageTag: 07ae4e19-8d83-4ed4-99dc-5788344dd674
+
+		level Continent
+			lineageTag: 16856cfe-abc2-483c-9bc8-050b30040d1e
+			column: Continent
+
+		level Country
+			lineageTag: b6eec68e-716e-49b1-9409-e4eea2b5aab7
+			column: Country
+
+		level State
+			lineageTag: a741cd5b-f3ca-49ec-83dd-c7220320bb84
+			column: State
+
+		level City
+			lineageTag: d9990c9a-b040-49f3-a8eb-4a74272bbe24
+			column: City
+
+		level Address
+			lineageTag: 45875670-af07-4f49-9a71-fdb197af4610
+			column: Address
+
+		changedProperty = IsHidden
+
+	partition Customer-bee8b62a-fee2-49b8-a0b6-5518e67a2d59 = m
+		mode: import
+		source =
+				let
+				    Source = SharePoint.Contents(#"Files Path", [ApiVersion=15]),
+				    #"Shared Documents" = Source{[Name="Shared Documents"]}[Content],
+				    #"Data" = #"Shared Documents"{[Name="Data"]}[Content],
+				    #"Contoso Sales" = #"Data"{[Name="Contoso Sales"]}[Content],
+				    #"Csv" = #"Contoso Sales"{[Name="Customer.csv"]}[Content],
+				    #"Imported CSV" = Csv.Document(#"Csv",[Delimiter=",", Columns=13, Encoding=65001, QuoteStyle=QuoteStyle.None]),
+				    #"Promoted Headers" = Table.PromoteHeaders(#"Imported CSV", [PromoteAllScalars=true]),
+				    #"Changed Type" = Table.TransformColumnTypes(#"Promoted Headers",{{"CustomerKey", Int64.Type}, {"Gender", type text}, {"Name", type text}, {"Address", type text}, {"City", type text}, {"State Code", type text}, {"State", type text}, {"Zip Code", type text}, {"Country Code", type text}, {"Country", type text}, {"Continent", type text}, {"Birthday", type datetime}, {"Age", Int64.Type}})
+				in
+				    #"Changed Type"
+
+	annotation PBI_ResultType = Exception
+
+	annotation PBI_NavigationStepName = Navigation
+

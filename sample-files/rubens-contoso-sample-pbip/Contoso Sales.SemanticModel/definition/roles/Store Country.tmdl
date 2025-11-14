@@ -1,0 +1,19 @@
+role 'Store Country'
+	modelPermission: read
+
+	tablePermission Store =
+			VAR __FilterValues =
+			    SELECTCOLUMNS(
+			        FILTER(
+			            'RLS_User Permissions',
+			            'RLS_User Permissions'[UserPrincipalName] = USERPRINCIPALNAME()
+			            && 'RLS_User Permissions'[Role] = "Country"
+			        ),
+			        "FilterValue", 'RLS_User Permissions'[Value]
+			    )
+			RETURN
+			    'Store'[Country]
+			        IN __FilterValues
+
+	annotation PBI_Id = 3c1262112e694d2eb9ff0d7b960be50c
+

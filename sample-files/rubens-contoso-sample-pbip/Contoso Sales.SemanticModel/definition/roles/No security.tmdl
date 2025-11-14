@@ -1,0 +1,5 @@
+role 'No security'
+	modelPermission: read
+
+	annotation PBI_Id = 1b2f85583e8d41dda3c25ae547c29856
+

@@ -1,0 +1,58 @@
+table 'RLS_User Permissions'
+	isHidden
+	lineageTag: 9ebacb02-0728-4890-863e-9928568c5c4b
+
+	column Role
+		dataType: string
+		isHidden
+		lineageTag: 991f1155-ea66-44db-9431-9ddfd98d4813
+		summarizeBy: none
+		sourceColumn: Role
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column Value
+		dataType: string
+		isHidden
+		lineageTag: 1a429d5d-60de-4e6b-9a78-6bda36b98cd6
+		summarizeBy: none
+		sourceColumn: Value
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column UserPrincipalName
+		dataType: string
+		isHidden
+		lineageTag: a4cdcca9-eef0-4193-9789-5fabc946e6a5
+		summarizeBy: none
+		sourceColumn: UserPrincipalName
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'RLS_User Permissions' = m
+		mode: import
+		source =
+				let
+				    Source = SharePoint.Contents(#"Files Path", [ApiVersion=15]),
+				    #"Shared Documents" = Source{[Name="Shared Documents"]}[Content],
+				    #"Data" = #"Shared Documents"{[Name="Data"]}[Content],
+				    #"Contoso Sales" = #"Data"{[Name="Contoso Sales"]}[Content],
+				    #"Xlsx" = #"Contoso Sales"{[Name="User Permissions.xlsx"]}[Content],
+				    #"Imported Excel Workbook" = Excel.Workbook(#"Xlsx"),
+				    #"Excel Table" = #"Imported Excel Workbook"{[Item="UserPermissionsTable",Kind="Table"]}[Data],
+				    #"Changed Type" = Table.TransformColumnTypes(#"Excel Table",{{"Role", type text}, {"Value", type text}, {"UserPrincipalName", type text}})
+				in
+				    #"Changed Type"
+
+	changedProperty = IsHidden
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

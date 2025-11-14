@@ -1,0 +1,762 @@
+table _Measures
+	lineageTag: 8f6ce169-fd92-4760-bf14-03ef98d80bbf
+
+	measure 'Total Margin' =
+			
+			[Total Revenue] - [Total Cost]
+		formatString: "€"\ #,0.00;-"€"\ #,0.00;"€"\ #,0.00
+		displayFolder: Total
+		lineageTag: e22dbc08-3844-485a-96d6-625d9d77e004
+
+		changedProperty = FormatString
+
+		changedProperty = IsHidden
+
+	measure 'Total Cost' =
+			
+			SUMX(
+			    'Sales',
+			    'Sales'[Quantity] * 'Sales'[Unit Cost]
+			)
+		formatString: "€"\ #,0.00;-"€"\ #,0.00;"€"\ #,0.00
+		displayFolder: Total
+		lineageTag: 416604ca-8ec2-48fb-97e3-568ef1a0c264
+
+		changedProperty = FormatString
+
+		changedProperty = IsHidden
+
+	measure 'Total Quantity' =
+			
+			SUM('Sales'[Quantity])
+		formatString: #,0
+		displayFolder: Total
+		lineageTag: 3c59d762-8e5b-4258-a132-1b6983b435ce
+
+		changedProperty = FormatString
+
+		changedProperty = IsHidden
+
+	measure 'Number of Dates' =
+			
+			COUNTROWS('Date')
+		formatString: #,0
+		displayFolder: Number of
+		lineageTag: c03c963c-88da-4131-bc64-80f62f0b0e2e
+
+	measure 'Number of Dates with Sales' =
+			
+			COUNTROWS(
+			    SUMMARIZE('Sales', 'Sales'[Order Date])
+			)
+		formatString: #,0
+		displayFolder: Number of
+		lineageTag: 83634030-01c1-46e4-85d0-e571eb086b85
+
+	measure 'Average Revenue' =
+			
+			AVERAGEX(
+			    'Sales',
+			    'Sales'[Quantity] * 'Sales'[Unit Price]
+			)
+		formatString: "€"\ #,0.00;-"€"\ #,0.00;"€"\ #,0.00
+		displayFolder: Average
+		lineageTag: 164a92b0-d2e8-454c-8073-686997fbbec7
+
+		changedProperty = FormatString
+
+		changedProperty = IsHidden
+
+	measure 'Average Cost' =
+			
+			AVERAGEX(
+			    'Sales',
+			    'Sales'[Quantity] * 'Sales'[Unit Cost]
+			)
+		formatString: "€"\ #,0.00;-"€"\ #,0.00;"€"\ #,0.00
+		displayFolder: Average
+		lineageTag: c4c6817d-d1ef-4e34-bc01-f76ed3bbdd8b
+
+		changedProperty = FormatString
+
+		changedProperty = IsHidden
+
+	measure 'Average Quantity' =
+			
+			AVERAGE('Sales'[Quantity])
+		formatString: #,0.00
+		displayFolder: Average
+		lineageTag: cfeb46bb-8d6a-4928-8195-9194b2df1c23
+
+		changedProperty = FormatString
+
+		changedProperty = IsHidden
+
+	measure 'Number of Customers' =
+			
+			COUNTROWS('Customer')
+		formatString: #,0
+		displayFolder: Number of
+		lineageTag: c024e961-a046-41af-a5fc-70bc53aa2690
+
+	measure 'Number of Customers with Sales' =
+			
+			COUNTROWS(
+			    SUMMARIZE('Sales', 'Sales'[CustomerKey])
+			)
+		formatString: #,0
+		displayFolder: Number of
+		lineageTag: cb707b8f-bf86-4e6a-b518-e854843fd28e
+
+	measure 'Number of Products' =
+			
+			COUNTROWS('Product')
+		formatString: #,0
+		displayFolder: Number of
+		lineageTag: 2c3fc21e-f153-43fb-892a-8176912dd687
+
+	measure 'Number of Products with Sales' =
+			
+			COUNTROWS(
+			    SUMMARIZE('Sales', 'Sales'[ProductKey])
+			)
+		formatString: #,0
+		displayFolder: Number of
+		lineageTag: c0fb056a-ea74-483e-9903-5b741e409c80
+
+	measure 'Number of Stores' =
+			
+			COUNTROWS('Store')
+		formatString: #,0
+		displayFolder: Number of
+		lineageTag: 0039fc20-8008-4041-8cf9-e5700f2cbc51
+
+	measure 'Number of Stores with Sales' =
+			
+			COUNTROWS(
+			    SUMMARIZE('Sales', 'Sales'[StoreKey])
+			)
+		formatString: #,0
+		displayFolder: Number of
+		lineageTag: 21d94770-8d31-478e-9624-73e1a09f2f12
+
+	measure 'Total Revenue' =
+			
+			SUMX(
+			    'Sales',
+			    'Sales'[Quantity] * 'Sales'[Unit Price]
+			)
+		formatString: "€"\ #,0.00;-"€"\ #,0.00;"€"\ #,0.00
+		displayFolder: Total
+		lineageTag: 7c5f9a14-3465-43ab-b1e5-aeb03f4fe8ad
+
+		changedProperty = FormatString
+
+		changedProperty = IsHidden
+
+	measure 'Corrected Revenue of Best Selling Day' =
+			
+			MAXX(
+			    VALUES('Date'),
+			    -- Context transition again
+			    CALCULATE(
+			        SUMX(
+			            'Sales',
+			            'Sales'[Quantity] * 'Sales'[Net Price]
+			        )
+			    )
+			)
+		formatString: "€"\ #,0.00;-"€"\ #,0.00;"€"\ #,0.00
+		displayFolder: Specific Revenue\Revenue of Best Selling Day
+		lineageTag: 2895c1c9-9f27-47a0-a146-77abb9547f3e
+
+		changedProperty = IsHidden
+
+	measure 'Revenue of Best Selling Day' =
+			
+			MAXX(
+			    VALUES('Date'),
+			    -- Context transition
+			    [Total Revenue]
+			)
+		formatString: "€"\ #,0.00;-"€"\ #,0.00;"€"\ #,0.00
+		displayFolder: Specific Revenue\Revenue of Best Selling Day
+		lineageTag: 86dff6b1-35a9-4a8c-9199-0729ddeae03a
+
+		changedProperty = IsHidden
+
+	measure 'Wrong Revenue of Best Selling Day' =
+			
+			MAXX(
+			    VALUES('Date'),
+			    -- No context transition
+			    SUMX(
+			        'Sales',
+			        'Sales'[Quantity] * 'Sales'[Net Price]
+			    )
+			)
+		formatString: "€"\ #,0.00;-"€"\ #,0.00;"€"\ #,0.00
+		displayFolder: Specific Revenue\Revenue of Best Selling Day
+		lineageTag: fb100526-f820-44c8-8697-fc2a114cba1f
+
+		changedProperty = IsHidden
+
+	measure 'Average Unit Cost' =
+			
+			AVERAGE('Sales'[Unit Cost])
+		formatString: "€"\ #,0.00;-"€"\ #,0.00;"€"\ #,0.00
+		displayFolder: Average
+		lineageTag: cdabf903-5851-40f6-8a0f-f39ebe171096
+
+		changedProperty = FormatString
+
+		changedProperty = IsHidden
+
+	measure 'Average Unit Price' =
+			
+			AVERAGE('Sales'[Unit Price])
+		formatString: "€"\ #,0.00;-"€"\ #,0.00;"€"\ #,0.00
+		displayFolder: Average
+		lineageTag: 5dbb260a-9dc6-44c9-b204-fa9a9cbc5144
+
+		changedProperty = FormatString
+
+		changedProperty = IsHidden
+
+	measure 'Average Net Price' =
+			
+			AVERAGE('Sales'[Net Price])
+		formatString: "€"\ #,0.00;-"€"\ #,0.00;"€"\ #,0.00
+		displayFolder: Average
+		lineageTag: 8a1d5af1-34bd-483e-acf0-ca72047c5b3b
+
+		changedProperty = FormatString
+
+		changedProperty = IsHidden
+
+	measure 'Revenue of Best Selling Product Category' =
+			
+			VAR __BestSellingCategory =
+			    CALCULATE(
+			        TOPN(
+			            1,
+			            VALUES('Product'[Category]),
+			            [Total Revenue],
+			            DESC -- Change to ASC for Worst Selling Product Category
+			        ),
+			        REMOVEFILTERS('Product')
+			    )
+			
+			VAR __RevenueOfBestSellingCategory =
+			    CALCULATE(
+			        [Total Revenue],
+			        REMOVEFILTERS('Product'),
+			        'Product'[Category] = __BestSellingCategory
+			    )
+			
+			RETURN
+			    __RevenueOfBestSellingCategory
+		formatString: "€"\ #,0.00;-"€"\ #,0.00;"€"\ #,0.00
+		displayFolder: Specific Revenue
+		lineageTag: 6ce75127-3a34-4093-a7e3-b57d352b8f8c
+
+	measure 'Revenue of Best Selling Month' =
+			
+			VAR __BestSellingMonth =
+			    CALCULATE(
+			        TOPN(
+			            1,
+			            VALUES('Date'[Month]),
+			            [Total Revenue],
+			            DESC -- Change to ASC for Worst Selling Month
+			        ),
+			        REMOVEFILTERS('Date')
+			    )
+			
+			VAR __RevenueOfBestSellingMonth =
+			    CALCULATE(
+			        [Total Revenue],
+			        REMOVEFILTERS('Date'),
+			        'Date'[Month] = __BestSellingMonth
+			    )
+			
+			RETURN
+			    __RevenueOfBestSellingMonth
+		formatString: "€"\ #,0.00;-"€"\ #,0.00;"€"\ #,0.00
+		displayFolder: Specific Revenue
+		lineageTag: 54020924-7f3e-4ca6-bd90-26d229636e4e
+
+	measure 'Previous Year Revenue' =
+			
+			CALCULATE(
+			    [Total Revenue],
+			    SAMEPERIODLASTYEAR('Date'[Date])
+			)
+		displayFolder: Existing Reports
+		lineageTag: 1623678e-e754-4fb3-ab21-c55d55895d2e
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Revenue Variance PY' =
+			
+			[Previous Year Revenue] - [Total Revenue]
+		displayFolder: Existing Reports
+		lineageTag: 26168dc5-996f-453b-9161-2b274b2a9587
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Revenue Variance PY Absolute' =
+			
+			ABS([Revenue Variance PY])
+		displayFolder: Existing Reports
+		lineageTag: e30a569d-d53e-43c9-a35e-dbef1fa99cde
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Gross Margin Absolute Variance PY' =
+			
+			[Gross Margin Absolute] - [Gross Margin Absolute PY]
+		formatString: "€"\ #,0;-"€"\ #,0;"€"\ #,0
+		displayFolder: Existing Reports
+		lineageTag: 89149f51-b0da-4c07-a565-11a423063298
+
+	measure 'Gross Margin Absolute PY' =
+			
+			CALCULATE(
+			    [Gross Margin Absolute],
+			    DATEADD(
+			        'Date'[Date], -1,YEAR
+			    )
+			)
+		formatString: "€"\ #,0;-"€"\ #,0;"€"\ #,0
+		displayFolder: Existing Reports
+		lineageTag: 823dc080-ee49-472a-961f-f1b28db0ddd9
+
+	measure 'Gross Margin Absolute' =
+			
+			[Total Revenue] - [Total Cost]
+		formatString: "€"\ #,0;-"€"\ #,0;"€"\ #,0
+		displayFolder: Existing Reports
+		lineageTag: b528821c-4b1a-4f35-a06b-49f7b417a9ea
+
+	measure 'Gross Margin % Variance PY' =
+			
+			([Gross Margin %] - [Gross Margin % PY]) *100
+		formatString: #,0.00%;-#,0.00%;#,0.00%
+		displayFolder: Existing Reports
+		lineageTag: 9f5568ee-a491-42ee-b900-27330e13e91b
+
+	measure 'Gross Margin % PY' =
+			
+			CALCULATE(
+			    [Gross Margin %],
+			    DATEADD(
+			        'Date'[Date], -1, YEAR
+			    )
+			)
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: Existing Reports
+		lineageTag: 5c37010d-3039-4ae8-b7db-8b2668e74450
+
+	measure 'Gross Margin %' = DIVIDE ( [Total Margin], [Total Revenue] )
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: Existing Reports
+		lineageTag: 1ac425bd-5281-465a-8dfe-ad42a2c5b557
+
+		changedProperty = FormatString
+
+		changedProperty = IsHidden
+
+	measure 'Center Margin Absolute' = ```
+			
+			VAR __HighMarginCategory =
+			    CALCULATE(
+			        TOPN(
+			            1,
+			            VALUES( 'Product'[Category] ),
+			            [Gross Margin Absolute],
+			            DESC
+			        ),
+			        ALL('Product')
+			    )
+			 
+			VAR __AbsoluteHighMarginCategory =
+			    CALCULATE(
+			        [Gross Margin Absolute],
+			        ALL( 'Product' ),
+			        'Product'[Category] = __HighMarginCategory
+			    )
+			 
+			RETURN __AbsoluteHighMarginCategory * 1.75
+			```
+		displayFolder: Existing Reports
+		lineageTag: 66f5f67c-d29a-4152-8645-b9000f03ceab
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Center Margin Absolute Dummy' = ```
+			
+			VAR __HighMarginCategory =
+			    CALCULATE(
+			        TOPN(
+			            1,
+			            VALUES( 'Product'[Category] ),
+			            [Gross Margin Absolute],
+			            DESC
+			        ),
+			        ALL('Product')
+			    )
+			 
+			VAR __AbsoluteHighMarginCategory =
+			    CALCULATE(
+			        [Gross Margin Absolute],
+			        ALL( 'Product' ),
+			        'Product'[Category] = __HighMarginCategory
+			    )
+			 
+			RETURN __AbsoluteHighMarginCategory * 1.75
+			```
+		displayFolder: Existing Reports
+		lineageTag: bdf4304e-5ef3-4e41-b37f-1519a3038520
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Color Lowest Gross Margin %' = ```
+			
+			VAR __HighMarginMonth =
+			    CALCULATE(
+			        TOPN(
+			            1,
+			            VALUES( 'Date'[Month] ),
+			            [Gross Margin %],
+			            ASC
+			        ),
+			        ALLEXCEPT('Date', 'Date'[Year])
+			    )
+			 
+			VAR __AbsoluteHighMarginMonth =
+			    CALCULATE(
+			        [Gross Margin %],
+			        ALLEXCEPT( 'Date', 'Date'[Year] ),
+			        'Date'[Month] = __HighMarginMonth
+			    )
+			
+			VAR _Return=
+			
+			IF([Gross Margin %] = __AbsoluteHighMarginMonth,
+			 __AbsoluteHighMarginMonth,
+			  BLANK()
+			)
+			 
+			RETURN FORMAT(_Return, "Percent")
+			```
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: Existing Reports
+		lineageTag: e726a5fe-d0cb-4f65-b62e-96656a3d6521
+
+	measure 'Color Lowest Gross Margin Absolute' = ```
+			
+			VAR __HighMarginMonth =
+			    CALCULATE(
+			        TOPN(
+			            1,
+			            VALUES( 'Date'[Month] ),
+			            [Gross Margin Absolute],
+			            ASC
+			        ),
+			        ALLEXCEPT('Date', 'Date'[Year])
+			    )
+			 
+			VAR __AbsoluteHighMarginMonth =
+			    CALCULATE(
+			        [Gross Margin Absolute],
+			        ALLEXCEPT( 'Date', 'Date'[Year] ),
+			        'Date'[Month] = __HighMarginMonth
+			    )
+			
+			VAR _Return=
+			
+			IF([Gross Margin Absolute] = __AbsoluteHighMarginMonth,
+			 __AbsoluteHighMarginMonth,
+			  BLANK()
+			)
+			 
+			RETURN _Return
+			```
+		formatString: "€"\ #,0;-"€"\ #,0;"€"\ #,0
+		displayFolder: Existing Reports
+		lineageTag: 703bbafb-bdb5-4db9-bea0-f82b7a93939b
+
+	measure 'Color NEG' =
+			
+			IF([Gross Margin Absolute] < [Gross Margin Absolute PY],
+			[Gross Margin Absolute Variance PY]
+			)
+		displayFolder: Existing Reports
+		lineageTag: a6110268-f5d6-4bb4-bf12-d4782a7f4149
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Color POS' =
+			
+			IF([Gross Margin Absolute] > [Gross Margin Absolute PY],
+			[Gross Margin Absolute Variance PY]
+			)
+		displayFolder: Existing Reports
+		lineageTag: 15ebeab2-ac32-43ff-8b38-b979fa9caedc
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Labels Lollipop Chart Left' = ```
+			
+			IF(
+			    [Gross Margin Absolute] > [Gross Margin Absolute PY],
+			    [Center Margin Absolute] + [Gross Margin Absolute Variance PY]
+			)
+			
+			```
+		formatString: "€"\ #,0;-"€"\ #,0;"€"\ #,0
+		displayFolder: Existing Reports
+		lineageTag: e9acc805-8897-42a5-b6b6-edf324ebfd67
+
+	measure 'Labels Lollipop Chart Right' = ```
+			
+			IF(
+			    [Gross Margin Absolute] < [Gross Margin Absolute PY],
+			    [Center Margin Absolute] + [Gross Margin Absolute Variance PY]
+			)
+			
+			```
+		formatString: "€"\ #,0;-"€"\ #,0;"€"\ #,0
+		displayFolder: Existing Reports
+		lineageTag: 0cdd6369-bbdb-4aaf-a726-0847c0f1f5a8
+
+	/// SVG Bar Chart (Label) of Total Revenue, grouped by Year
+	measure 'SVG Total Revenue by Year' = ```
+			
+			-- Use this inside of a Table or a Matrix visual.
+			-- The 'Image size' property of the Table or Matrix should be set to "Height" of 25 px and "Width" of 100 px for the best results.
+			
+			
+			----------------------------------------------------------------------------------------
+			-------------------- START CONFIG - SAFELY CHANGE STUFF IN THIS AREA -------------------
+			----------------------------------------------------------------------------------------
+			
+			
+			-- Color config.
+			---- Bar fill
+			VAR _BarFillColor = "#CFCFCF" -- Greyish
+			VAR _LabelColor = "#666666"   -- Darkish greyish
+			VAR _LabelFont = "Segoe UI"
+			VAR _LabelWeight = "600"      -- Semibold-ish
+			VAR _LabelSize = "11"         -- Semibold-ish
+			
+			
+			-- Input field config
+			VAR _Actual = [Total Revenue]
+			
+			    -- How to format actuals
+			    VAR _NumberFormat =
+			        SWITCH (
+			            TRUE (),
+			            _Actual <= 1E3,  FORMAT ( _Actual, "#,0" ),
+			            _Actual <= 1E4,  FORMAT ( _Actual, "#,0,.00 K" ),
+			            _Actual <= 1E5,  FORMAT ( _Actual, "#,0,.0 K" ),
+			            _Actual <= 1E6,  FORMAT ( _Actual, "#,0, K" ),
+			            _Actual <= 1E7,  FORMAT ( _Actual, "#,0,,.00 M" ),
+			            _Actual <= 1E8,  FORMAT ( _Actual, "#,0,,.0 M" ),
+			            _Actual <= 1E9,  FORMAT ( _Actual, "#,0,, M" ),
+			            _Actual <= 1E10, FORMAT ( _Actual, "#,0,,,.00 bn" ),
+			            _Actual <= 1E11, FORMAT ( _Actual, "#,0,,,.0 bn" ),
+			            _Actual <= 1E12, FORMAT ( _Actual, "#,0,,, bn" )
+			        )
+			
+			-- Chart Config
+			VAR _BarMax = 100
+			VAR _BarMin = 44
+			VAR _Scope = ALLSELECTED ( 'Date'[Year] ) -- Table comprising all values that group the actuals and targets
+			
+			
+			----------------------------------------------------------------------------------------
+			----------------------- END CONFIG - BEYOND HERE THERE BE DRAGONS ----------------------
+			----------------------------------------------------------------------------------------
+			
+			
+			-- Only change the parts of this code if you want to adjust how the SVG visual works or add / remove stuff.
+			
+			    -- Get axis maximum
+			    VAR _MaxActualsInScope = 
+			        CALCULATE(
+			            MAXX(
+			                _Scope,
+			                [Total Revenue]
+			            ),
+			            REMOVEFILTERS( 'Date'[Year] )
+			        )
+			    
+			    VAR _AxisMax = 
+			        IF (
+			            HASONEVALUE ( 'Date'[Year] ),
+			            _MaxActualsInScope
+			        ) * 1.1
+			    
+			    
+			    -- Normalize values (to get position along X-axis)
+			    VAR _AxisRange = 
+			        _BarMax - _BarMin
+			    
+			    VAR _ActualNormalized = 
+			        DIVIDE ( _Actual, _AxisMax ) * _AxisRange
+			
+			
+			-- Vectors and SVG code
+			VAR _SvgPrefix = "data:image/svg+xml;utf8, <svg xmlns='http://www.w3.org/2000/svg'>"
+			
+			---- To sort the SVG in a table or matrix by the bar length
+			VAR _Sort = "<desc>" & FORMAT ( _Actual, "000000000000" ) & "</desc>"
+			
+			VAR _ActualBar  = "<rect x='" & _BarMin & "' y='6' width='" & _ActualNormalized & "' height='50%' fill='" & _BarFillColor & "'/>"
+			VAR _ActualLabel = "<text x='40' y='16' font-family='" & _LabelFont & "' font-size='" & _LabelSize & "' font-weight='" & _LabelWeight & "'  text-anchor=""end"" fill='" & _LabelColor & "'>" & _NumberFormat & "</text>"
+			
+			VAR _SvgSuffix = "</svg>"
+			
+			
+			-- Final result
+			VAR _SVG = 
+			    _SvgPrefix
+			    
+			    & _Sort
+			    
+			    & _ActualBar
+			    & _ActualLabel
+			    
+			    & _SvgSuffix
+			    
+			RETURN
+			    _SVG
+			
+			```
+		displayFolder: SVGs\Bar Chart
+		lineageTag: dab06a3a-ff7b-415a-ad66-a51173850d24
+		dataCategory: ImageUrl
+
+	/// SVG Bar Chart (Label) of Total Revenue, grouped by Category
+	measure 'SVG Total Revenue by Product Category' = ```
+			
+			-- Use this inside of a Table or a Matrix visual.
+			-- The 'Image size' property of the Table or Matrix should be set to "Height" of 25 px and "Width" of 100 px for the best results.
+			
+			
+			----------------------------------------------------------------------------------------
+			-------------------- START CONFIG - SAFELY CHANGE STUFF IN THIS AREA -------------------
+			----------------------------------------------------------------------------------------
+			
+			
+			-- Color config.
+			---- Bar fill
+			VAR _BarFillColor = "#CFCFCF" -- Greyish
+			VAR _LabelColor = "#666666"   -- Darkish greyish
+			VAR _LabelFont = "Segoe UI"
+			VAR _LabelWeight = "600"      -- Semibold-ish
+			VAR _LabelSize = "11"         -- Semibold-ish
+			
+			
+			-- Input field config
+			VAR _Actual = [Total Revenue]
+			
+			    -- How to format actuals
+			    VAR _NumberFormat =
+			        SWITCH (
+			            TRUE (),
+			            _Actual <= 1E3,  FORMAT ( _Actual, "#,0" ),
+			            _Actual <= 1E4,  FORMAT ( _Actual, "#,0,.00 K" ),
+			            _Actual <= 1E5,  FORMAT ( _Actual, "#,0,.0 K" ),
+			            _Actual <= 1E6,  FORMAT ( _Actual, "#,0, K" ),
+			            _Actual <= 1E7,  FORMAT ( _Actual, "#,0,,.00 M" ),
+			            _Actual <= 1E8,  FORMAT ( _Actual, "#,0,,.0 M" ),
+			            _Actual <= 1E9,  FORMAT ( _Actual, "#,0,, M" ),
+			            _Actual <= 1E10, FORMAT ( _Actual, "#,0,,,.00 bn" ),
+			            _Actual <= 1E11, FORMAT ( _Actual, "#,0,,,.0 bn" ),
+			            _Actual <= 1E12, FORMAT ( _Actual, "#,0,,, bn" )
+			        )
+			
+			-- Chart Config
+			VAR _BarMax = 100
+			VAR _BarMin = 44
+			VAR _Scope = ALLSELECTED ( 'Product'[Category] ) -- Table comprising all values that group the actuals and targets
+			
+			
+			----------------------------------------------------------------------------------------
+			----------------------- END CONFIG - BEYOND HERE THERE BE DRAGONS ----------------------
+			----------------------------------------------------------------------------------------
+			
+			
+			-- Only change the parts of this code if you want to adjust how the SVG visual works or add / remove stuff.
+			
+			    -- Get axis maximum
+			    VAR _MaxActualsInScope = 
+			        CALCULATE(
+			            MAXX(
+			                _Scope,
+			                [Total Revenue]
+			            ),
+			            REMOVEFILTERS( 'Product'[Category] )
+			        )
+			    
+			    VAR _AxisMax = 
+			        IF (
+			            HASONEVALUE ( 'Product'[Category] ),
+			            _MaxActualsInScope
+			        ) * 1.1
+			    
+			    
+			    -- Normalize values (to get position along X-axis)
+			    VAR _AxisRange = 
+			        _BarMax - _BarMin
+			    
+			    VAR _ActualNormalized = 
+			        DIVIDE ( _Actual, _AxisMax ) * _AxisRange
+			
+			
+			-- Vectors and SVG code
+			VAR _SvgPrefix = "data:image/svg+xml;utf8, <svg xmlns='http://www.w3.org/2000/svg'>"
+			
+			---- To sort the SVG in a table or matrix by the bar length
+			VAR _Sort = "<desc>" & FORMAT ( _Actual, "000000000000" ) & "</desc>"
+			
+			VAR _ActualBar  = "<rect x='" & _BarMin & "' y='6' width='" & _ActualNormalized & "' height='50%' fill='" & _BarFillColor & "'/>"
+			VAR _ActualLabel = "<text x='40' y='16' font-family='" & _LabelFont & "' font-size='" & _LabelSize & "' font-weight='" & _LabelWeight & "'  text-anchor=""end"" fill='" & _LabelColor & "'>" & _NumberFormat & "</text>"
+			
+			VAR _SvgSuffix = "</svg>"
+			
+			
+			-- Final result
+			VAR _SVG = 
+			    _SvgPrefix
+			    
+			    & _Sort
+			    
+			    & _ActualBar
+			    & _ActualLabel
+			    
+			    & _SvgSuffix
+			    
+			RETURN
+			    _SVG
+			
+			```
+		displayFolder: SVGs\Bar Chart
+		lineageTag: a576db0e-30d8-48fb-8eb0-a455d4223cd5
+		dataCategory: ImageUrl
+
+	partition _Measures = m
+		mode: import
+		source =
+				let
+				    Source = Table.FromRows(Json.Document(Binary.Decompress(Binary.FromText("i44FAA==", BinaryEncoding.Base64), Compression.Deflate)), let _t = ((type nullable text) meta [Serialized.Text = true]) in type table [Column1 = _t]),
+				    #"Removed Columns" = Table.RemoveColumns(Source,{"Column1"})
+				in
+				    #"Removed Columns"
+
+	annotation PBI_ResultType = Table
+

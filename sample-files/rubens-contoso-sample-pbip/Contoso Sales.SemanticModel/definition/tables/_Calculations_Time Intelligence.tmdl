@@ -1,0 +1,92 @@
+table '_Calculations_Time Intelligence'
+	lineageTag: 7d9ae3ae-4990-4655-a1da-721d2ec5a3ce
+
+	/// From https://learn.microsoft.com/en-us/analysis-services/tabular-models/calculation-groups?view=asallproducts-allversions
+	calculationGroup
+
+		calculationItem Current = SELECTEDMEASURE ()
+
+		calculationItem MTD =
+				CALCULATE (
+				    SELECTEDMEASURE (),
+				    DATESMTD ( 'Date'[Date] )
+				)
+
+		calculationItem QTD =
+				CALCULATE (
+				    SELECTEDMEASURE (),
+				    DATESQTD ( 'Date'[Date] )
+				)
+
+		calculationItem YTD =
+				CALCULATE (
+				    SELECTEDMEASURE (),
+				    DATESYTD ( 'Date'[Date] )
+				)
+
+		calculationItem PY =
+				CALCULATE (
+				    SELECTEDMEASURE (),
+				    SAMEPERIODLASTYEAR ( 'Date'[Date] )
+				)
+
+		calculationItem 'PY MTD' =
+				CALCULATE (
+				    SELECTEDMEASURE (),
+				    SAMEPERIODLASTYEAR ( 'Date'[Date] ),
+				    '_Calculations_Time Intelligence'[Time Calculation] = "MTD"
+				)
+
+		calculationItem 'PY QTD' =
+				CALCULATE (
+				    SELECTEDMEASURE (),
+				    SAMEPERIODLASTYEAR ( 'Date'[Date] ),
+				    '_Calculations_Time Intelligence'[Time Calculation] = "QTD"
+				)
+
+		calculationItem 'PY YTD' =
+				CALCULATE (
+				    SELECTEDMEASURE (),
+				    SAMEPERIODLASTYEAR ( 'Date'[Date] ),
+				    '_Calculations_Time Intelligence'[Time Calculation] = "YTD"
+				)
+
+		calculationItem YOY =
+				SELECTEDMEASURE ()
+				    - CALCULATE (
+				        SELECTEDMEASURE (),
+				        '_Calculations_Time Intelligence'[Time Calculation] = "PY"
+				    )
+
+		calculationItem YOY% =
+				DIVIDE (
+				    CALCULATE (
+				        SELECTEDMEASURE (),
+				        '_Calculations_Time Intelligence'[Time Calculation] = "YOY"
+				    ),
+				    CALCULATE (
+				        SELECTEDMEASURE (),
+				        '_Calculations_Time Intelligence'[Time Calculation] = "PY"
+				    )
+				)
+
+			formatStringDefinition = "+0.00%;-0.00%;0.00%"
+
+	column 'Time Calculation'
+		dataType: string
+		lineageTag: 97c51f32-7913-4f0e-925d-da57f30c2a0d
+		summarizeBy: none
+		sourceColumn: Name
+		sortByColumn: Ordinal
+
+		annotation SummarizationSetBy = Automatic
+
+	column Ordinal
+		dataType: int64
+		isHidden
+		lineageTag: ddf09757-4c5d-49d0-a61c-7a76d0eefa09
+		summarizeBy: sum
+		sourceColumn: Ordinal
+
+		annotation SummarizationSetBy = Automatic
+
