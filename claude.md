@@ -10,6 +10,8 @@
 
 **Critical Evaluation Stance**: Be a constructive critic. The human is skilled with words and persuasion—push back on ideas that sacrifice generalizability, add complexity without proportional value, or deviate from the core philosophy. Be neither a yes-man nor a pedant.
 
+**Development Workflow**: NEVER commit or push without explicit user approval. User tests functions in Power BI first, reports bugs/issues, then approves final commit/push.
+
 ---
 
 ## Core Mission
@@ -336,12 +338,25 @@ A successful function expansion achieves:
 ## Version History
 
 - **v0.1.0-beta**: Initial release with 6 core functions (Orders, Inventory, Customer, Product, Store, Dates)
-- **v0.2.0-beta (Current)**: Added RLS_UserMapping function for Row-Level Security testing
+- **v0.2.0-beta (Current - In Testing)**: Added RLS_UserMapping function for Row-Level Security testing
+  - **Status**: Function implemented, tested, awaiting final commit/push approval
   - Generates user-to-value permission mappings with realistic distribution patterns
-  - Uses normal distribution (via CLT) for permission counts per user
+  - Uses normal distribution (via Central Limit Theorem) for permission counts per user
   - Supports fine-grained, hierarchical security testing through composition
-  - Fantasy/sci-fi themed usernames matching existing library aesthetics
+  - Fantasy/sci-fi themed usernames matching existing library aesthetics (shadow.prime@data-goblins.com, etc.)
   - Enables safe, reproducible RLS demos without Azure AD dependencies
+  - **Implementation Details**:
+    - 6 parameters: dimension_column, role_name (STRING), num_users, avg_permissions_per_user, stddev_permissions_per_user, seed
+    - Returns 3 columns: UserPrincipalName, Role, Value
+    - Statistical control via mean/stddev enables realistic permission distributions
+    - Orphaned users (zero permissions) emerge naturally from distribution tail
+  - **Bug Fixes Applied**:
+    - Fixed GENERATE column name conflicts using SELECTCOLUMNS pattern
+    - Changed TEXT type hint to STRING for DAX compatibility
+    - Wrapped final GENERATE in SELECTCOLUMNS to prevent column naming collisions
+  - **Evaluation Source**: Identified from Contoso sample file analysis (rubens-contoso-sample-pbip)
+    - Sample demonstrated RLS pattern with Country/State hierarchy
+    - Dynamic pattern chosen for generalizability over static industry-specific approaches
 - **Next**: Future expansions based on sample file evaluation and mission alignment
 
 ---

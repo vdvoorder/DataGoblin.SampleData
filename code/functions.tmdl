@@ -1462,7 +1462,7 @@ function 'DataGoblins.SampleData.RLS_UserMapping' = ```
             dimension_column : ANYREF,
 
             -- Role name for this permission level (e.g., "Country", "State")
-            role_name : TEXT,
+            role_name : STRING,
 
             -- Number of test users to generate
             num_users : INT64,
@@ -1576,10 +1576,10 @@ function 'DataGoblins.SampleData.RLS_UserMapping' = ```
                     VAR _NumPerms = [NumPermissions]
                     VAR _PermSeries = GENERATESERIES( 1, _NumPerms, 1 )
                     RETURN
-                        ADDCOLUMNS(
+                        SELECTCOLUMNS(
                             _PermSeries,
-                            "UserID", _UserID,
-                            "UserPrincipalName", _UserName,
+                            "PermUserID", _UserID,
+                            "PermUserPrincipalName", _UserName,
                             "PermissionSlot", [Value]
                         )
                 )
@@ -1588,27 +1588,33 @@ function 'DataGoblins.SampleData.RLS_UserMapping' = ```
             VAR _PermissionAssignments =
                 ADDCOLUMNS(
                     _PermissionSlots,
-                    "R_Value", MOD( [UserID] * 3571 + [PermissionSlot] * 2999 + seed, 32749 ),
+                    "R_Value", MOD( [PermUserID] * 3571 + [PermissionSlot] * 2999 + seed, 32749 ),
                     "SelectedValueIndex",
-                        MOD( [UserID] * 3571 + [PermissionSlot] * 2999 + seed, _NumValues ) + 1
+                        MOD( [PermUserID] * 3571 + [PermissionSlot] * 2999 + seed, _NumValues ) + 1
                 )
 
             -- Join with dimension values to get actual values
             VAR _FinalPermissions =
-                GENERATE(
-                    _PermissionAssignments,
-                    VAR _TargetIndex = [SelectedValueIndex]
-                    VAR _SelectedValue =
-                        MAXX(
-                            FILTER( _IndexedValues, [ValueIndex] = _TargetIndex ),
-                            dimension_column
-                        )
-                    RETURN
-                        ROW(
-                            "UserPrincipalName", [UserPrincipalName],
-                            "Role", role_name,
-                            "Value", _SelectedValue
-                        )
+                SELECTCOLUMNS(
+                    GENERATE(
+                        _PermissionAssignments,
+                        VAR _TargetIndex = [SelectedValueIndex]
+                        VAR _UserPrincipalName_Final = [PermUserPrincipalName]
+                        VAR _SelectedValue =
+                            MAXX(
+                                FILTER( _IndexedValues, [ValueIndex] = _TargetIndex ),
+                                dimension_column
+                            )
+                        RETURN
+                            ROW(
+                                "FinalUserPrincipalName", _UserPrincipalName_Final,
+                                "FinalRole", role_name,
+                                "FinalValue", _SelectedValue
+                            )
+                    ),
+                    "UserPrincipalName", [FinalUserPrincipalName],
+                    "Role", [FinalRole],
+                    "Value", [FinalValue]
                 )
 
             -- Remove duplicates (same user assigned same value multiple times)
